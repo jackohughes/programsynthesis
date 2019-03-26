@@ -1,0 +1,805 @@
+##########      RUNNING INFERENCE TESTS      ##########
+constants: PASS - 1
+	expected result: Int_t
+	actual result: Int_t
+
+constants: PASS - true
+	expected result: Bool_t
+	actual result: Bool_t
+
+lists: PASS - [1, 2, 3, 4]
+	expected result: [Int_t]
+	actual result: [Int_t]
+
+lists: PASS - [true, false]
+	expected result: [Bool_t]
+	actual result: [Bool_t]
+
+lists: PASS - [[1,2,3], [4,5,6], [7,8,9]]
+	expected result: [[Int_t]]
+	actual result: [[Int_t]]
+
+lists: PASS - [(1, (), ())]
+	expected result: [(Int_t)]
+	actual result: [(Int_t)]
+
+lists: PASS - [(1, 2), (3, 4), (2, 1)]
+	expected result: [(Int_t, Int_t)]
+	actual result: [(Int_t, Int_t)]
+
+lists: PASS - []
+	expected result: Empty_t
+	actual result: Empty_t
+
+trees: PASS - ([1,2,3], (), ())
+	expected result: ([Int_t])
+	actual result: ([Int_t])
+
+trees: PASS - (1, (), (2, (), ()))
+	expected result: (Int_t)
+	actual result: (Int_t)
+
+trees: PASS - ((1, (), ()), (), ())
+	expected result: ((Int_t))
+	actual result: ((Int_t))
+
+operations: PASS - + (1, 2, 3)
+	expected result: Int_t
+	actual result: Int_t
+
+operations: PASS - not (false)
+	expected result: Bool_t
+	actual result: Bool_t
+
+lambdas: PASS - (fun x -> + (3, (hd (x))))
+	expected result: (Var_t T1 -> Int_t)
+	actual result: (Var_t T0 -> Int_t)
+
+lambdas: PASS - (fun x -> x)
+	expected result: (Var_t T1 -> Var_t T1)
+	actual result: (Var_t T1 -> Var_t T1)
+
+lambdas: PASS - (fun x -> + (x, 3))
+	expected result: (Var_t T1 -> Int_t)
+	actual result: (Var_t T2 -> Int_t)
+
+lambdas: PASS - (fun x -> + (fst (x), snd (x)))
+	expected result: (Var_t T1 -> Int_t)
+	actual result: (Var_t T3 -> Int_t)
+
+lets/apps: PASS - let x = (fun y -> + (y, y)) in (x 3)
+	expected result: Var_t T1
+	actual result: Var_t T6
+
+lets/apps: PASS - let x = (fun y -> [y]) in (x 3)
+	expected result: Var_t T1
+	actual result: Var_t T9
+
+lets/apps: PASS - let x = (fun y -> + (y, y)) in true
+	expected result: Bool_t
+	actual result: Bool_t
+
+function constants: PASS - map (fun x -> + (1,2,3)) [1,2,3]
+	expected result: ([Int_t] -> [Int_t])
+	actual result: ([Int_t] -> [Int_t])
+
+function constants: PASS - mapt (fun x -> + (1,2,3)) (1, (), ())
+	expected result: ((Int_t) -> (Int_t))
+	actual result: ((Int_t) -> (Int_t))
+
+function constants: PASS - foldl (fun acc -> (fun x -> + (acc, x))) 0 [1,2,3]
+	expected result: ([Int_t] -> Int_t)
+	actual result: ([Int_t] -> Int_t)
+
+function constants: PASS - foldr (fun acc -> (fun x -> + (acc, x))) 0 [1,2,3]
+	expected result: ([Int_t] -> Int_t)
+	actual result: ([Int_t] -> Int_t)
+
+function constants: PASS - filt (fun x -> ==. (x, true)) [true, false, true]
+	expected result: ([Bool_t] -> [Bool_t])
+	actual result: ([Bool_t] -> [Bool_t])
+
+ifs: PASS - if true then true else false
+	expected result: Bool_t
+	actual result: Bool_t
+
+ifs: PASS - if true then [1,2,3] else [4,5,6]
+	expected result: [Int_t]
+	actual result: [Int_t]
+
+pairs: PASS - (1, true)
+	expected result: (Int_t, Bool_t)
+	actual result: (Int_t, Bool_t)
+
+pairs: PASS - (true, ==. (true, true))
+	expected result: (Bool_t, Bool_t)
+	actual result: (Bool_t, Bool_t)
+
+pairs: PASS - (1, [(1, (), ())])
+	expected result: (Int_t, [(Int_t)])
+	actual result: (Int_t, [(Int_t)])
+
+failures: PASS - + (1, true)
+	expected result: error
+	actual result: error
+
+failures: PASS - == (true, 1)
+	expected result: error
+	actual result: error
+
+failures: PASS - if truen then 1 else false
+	expected result: error
+	actual result: error
+
+failures: PASS - [1, 2, 3, 4, 5, true]
+	expected result: error
+	actual result: error
+
+failures: PASS - (1, (2, (), ()), (false, (), ()))
+	expected result: error
+	actual result: error
+
+##########     INFERENCE TESTS COMPLETE      ##########
+##########     RUNNING EVALUATION TESTS      ##########
+let: PASS - (let x = (fun y -> + (5, y)) in (x 5))
+	expected: 10
+	actual result: 10
+
+let: PASS - (let x = (fun y -> not (y)) in (x true))
+	expected: false
+	actual result: false
+
+let: PASS - (let x = (fun y -> map (fun z -> * (z, 2)) y) in (x [1,2,3,4]))
+	expected: [2, 4, 6, 8]
+	actual result: [2, 4, 6, 8]
+
+let: PASS - (let x = (fun y ->  value (y)) in (x ((1001, (), ()))))
+	expected: 1001
+	actual result: 1001
+
+app: PASS - ((fun y -> + (5, y)) 5)
+	expected: 10
+	actual result: 10
+
+app: PASS - ((fun y -> not (y)) true)
+	expected: false
+	actual result: false
+
+app: PASS - ((fun y -> map (fun z -> * (z, 2)) y) [1,2,3,4])
+	expected: [2, 4, 6, 8]
+	actual result: [2, 4, 6, 8]
+
+app: PASS - ((fun y -> value (y)) (1001, (), ()))
+	expected: 1001
+	actual result: 1001
+
+op: PASS - (+ (1, 2, 3, 4))
+	expected: 10
+	actual result: 10
+
+op: PASS - (/ (10, 2))
+	expected: 5
+	actual result: 5
+
+op: PASS - (- (100, 50))
+	expected: 50
+	actual result: 50
+
+op: PASS - (% (10, 3))
+	expected: 1
+	actual result: 1
+
+op: PASS - (== (2, 2))
+	expected: true
+	actual result: true
+
+op: PASS - (!= (2, 4))
+	expected: true
+	actual result: true
+
+op: PASS - (!=. (true, false))
+	expected: true
+	actual result: true
+
+op: PASS - (==. (true, true))
+	expected: true
+	actual result: true
+
+op: PASS - (<= (1, 3))
+	expected: false
+	actual result: false
+
+op: PASS - (>= (3, 1))
+	expected: false
+	actual result: false
+
+op: PASS - (> (1, 3))
+	expected: true
+	actual result: true
+
+op: PASS - (< (3, 1))
+	expected: true
+	actual result: true
+
+op: PASS - (== (2, 4))
+	expected: false
+	actual result: false
+
+op: PASS - (!= (2, 2))
+	expected: false
+	actual result: false
+
+op: PASS - (!=. (true, true))
+	expected: false
+	actual result: false
+
+op: PASS - (==. (true, false))
+	expected: false
+	actual result: false
+
+op: PASS - (<= (3, 1))
+	expected: true
+	actual result: true
+
+op: PASS - (>= (1, 3))
+	expected: true
+	actual result: true
+
+op: PASS - (> (3, 1))
+	expected: false
+	actual result: false
+
+op: PASS - (< (1, 3))
+	expected: false
+	actual result: false
+
+op: PASS - (fst ((1, 2)))
+	expected: 1
+	actual result: 1
+
+op: PASS - (snd ((1, 2)))
+	expected: 2
+	actual result: 2
+
+op: PASS - (index ([1,2,3,4], 1))
+	expected: 2
+	actual result: 2
+
+op: PASS - (index ([[1],[2],[3],[4]], 1))
+	expected: [2]
+	actual result: [2]
+
+if: PASS - (if true then true else false)
+	expected: true
+	actual result: true
+
+if: PASS - (if (== ((+ (4, 2)), 6)) then 1 else 2)
+	expected: 1
+	actual result: 1
+
+if: PASS - (if (> (1, 2)) then false else true)
+	expected: false
+	actual result: false
+
+pair: PASS - ((+ (1,2,3)), (- (10, 5)))
+	expected: (6, 5)
+	actual result: (6, 5)
+
+pair: PASS - (((fun x -> * (x, 2)) 5),((fun x -> not (x)) false))
+	expected: (10, true)
+	actual result: (10, true)
+
+map: PASS - (map (fun x -> * (x, x)) [1,2,3,4])
+	expected: [1, 4, 9, 16]
+	actual result: [1, 4, 9, 16]
+
+map: PASS - (map (fun x -> not (x)) [true, false, true])
+	expected: [false, true, false]
+	actual result: [false, true, false]
+
+map: PASS - (mapt (fun x -> * (x, x)) (1, (2, (), ()), (3, (), ())))
+	expected: (1, (4, (), ()), (9, (), ()))
+	actual result: (1, (4, (), ()), (9, (), ()))
+
+map: PASS - (mapt (fun x -> not (x)) (true, (true, (false, (), ()), ()), ()))
+	expected: (false, (false, (true, (), ()), ()), ())
+	actual result: (false, (false, (true, (), ()), ()), ())
+
+filter: PASS - (filt (fun x -> ==. (x, true)) [true, false, false, true])
+	expected: [true, true]
+	actual result: [true, true]
+
+filter: PASS - (filt (fun x -> != (0, % (x, 3))) [3,6,9])
+	expected: []
+	actual result: []
+
+filter: PASS - (filt (fun x -> < (x, 1)) [1,2,3,4])
+	expected: [2, 3, 4]
+	actual result: [2, 3, 4]
+
+filter: PASS - (filt (fun x -> == (x, 0)) [1,0,3,0])
+	expected: [0, 0]
+	actual result: [0, 0]
+
+fold: PASS - (foldr (fun x -> fun acc -> + (x, acc)) 0 [1, 2, 3, 4, 5])
+	expected: 15
+	actual result: 15
+
+failures: PASS - + (1, true)
+	expected result: error
+	actual result: error
+
+failures: PASS - index ([1, 2, 3]. 5)
+	expected result: error
+	actual result: error
+
+failures: PASS - fst ([1,2,3])
+	expected result: error
+	actual result: error
+
+failures: PASS - <= (true, false)
+	expected result: error
+	actual result: error
+
+failures: PASS - == (true, false)
+	expected result: error
+	actual result: error
+
+failures: PASS - ==. (1, 2, 3)
+	expected result: error
+	actual result: error
+
+failures: PASS - map (fun x -> + (x, x)) (1, 2)
+	expected result: error
+	actual result: error
+
+failures: PASS - mapt (fun x -> x) [1, 2, 3, 4]
+	expected result: error
+	actual result: error
+
+##########    EVALUATION TESTS COMPLETE      ##########
+##########       RUNNING COST TESTS          ##########
+cost 0: PASS - 0
+	expected result: 0
+	actual result: 0
+
+cost 0: PASS - true
+	expected result: 0
+	actual result: 0
+
+cost 0: PASS - v1
+	expected result: 0
+	actual result: 0
+
+cost 0: PASS - 10001
+	expected result: 0
+	actual result: 0
+
+cost 1: PASS - (1, 2)
+	expected result: 1
+	actual result: 1
+
+cost 1: PASS - (fun x -> x)
+	expected result: 1
+	actual result: 1
+
+cost 1: PASS - [1]
+	expected result: 1
+	actual result: 1
+
+cost 1: PASS - (1, (), ())
+	expected result: 1
+	actual result: 1
+
+cost 1: PASS - (v1 v2)
+	expected result: 1
+	actual result: 1
+
+cost 1: PASS - + (1, 2)
+	expected result: 1
+	actual result: 1
+
+cost 2: PASS - (1, (1, 2))
+	expected result: 2
+	actual result: 2
+
+cost 2: PASS - [1,2]
+	expected result: 2
+	actual result: 2
+
+cost 2: PASS - (fun x -> (fun y -> y))
+	expected result: 2
+	actual result: 2
+
+cost 2: PASS - (fun x -> + (x, 2))
+	expected result: 2
+	actual result: 2
+
+cost 2: PASS - (1, (2, (), ()), ())
+	expected result: 2
+	actual result: 2
+
+cost 2: PASS - + (1, 3, 1)
+
+	expected result: 2
+	actual result: 2
+
+cost 3: PASS - [1,2,3]
+	expected result: 3
+	actual result: 3
+
+cost 3: PASS - (fun x -> (fun y -> (fun z -> z)))
+	expected result: 3
+	actual result: 3
+
+cost 3: PASS - ((fun x -> fun y -> y) 1)
+	expected result: 3
+	actual result: 3
+
+cost 3: PASS - ((1,2), (3,4))
+	expected result: 3
+	actual result: 3
+
+cost 3: PASS - (1, (2, (), ()), (3, (), ()))
+	expected result: 3
+	actual result: 3
+
+cost 3: PASS - / (1, 2, 3, 4)
+	expected result: 3
+	actual result: 3
+
+cost 4: PASS - (fun x -> + (1, 2, 3, 4))
+	expected result: 4
+	actual result: 4
+
+cost 4: PASS - ([1, 2], (2, 3))
+	expected result: 4
+	actual result: 4
+
+cost 4: PASS - [[1, 2, 3]]
+	expected result: 4
+	actual result: 4
+
+cost 4: PASS - (fun x -> (fun y -> [x,y]))
+	expected result: 4
+	actual result: 4
+
+cost 4: PASS - let x = (fun y -> + (y, 1)) in (x 1)
+	expected result: 4
+	actual result: 4
+
+cost 4: PASS - (1, (2, (3, (), ()), ()), (4, (), ()))
+	expected result: 4
+	actual result: 4
+
+cost 5: PASS - (fun x -> (fun y -> + (x, y, 2, 3)))
+	expected result: 5
+	actual result: 5
+
+cost 5: PASS - let x = (fun y -> y) in ((x 1), (x 2))
+	expected result: 5
+	actual result: 5
+
+cost 5: PASS - [1, 2, 3, 4, 5]
+	expected result: 5
+	actual result: 5
+
+cost 5: PASS - (fun x -> (fun y -> (fun z -> (fun a -> (fun b -> y)))))
+	expected result: 5
+	actual result: 5
+
+cost 5: PASS - if (== (1, 3, 2)) then 1 else 2
+	expected result: 5
+	actual result: 5
+
+cost 5: PASS - + (1, 2, 3, 4, 5, 6)
+	expected result: 5
+	actual result: 5
+
+cost 10: PASS - let x = (fun y -> * (y, 10, y)) in [(y 1), (y 2), (y 3)]
+	expected result: 10
+	actual result: 10
+
+cost 10: PASS - [[1, 2], [3, 4], [5, 6, 7]]
+	expected result: 10
+	actual result: 10
+
+cost 10: PASS - map (fun x -> + (1, % (x, 2))) [1,2,3,4,5,6]
+	expected result: 10
+	actual result: 10
+
+cost 15: PASS - let x = (fun y -> * (y, 10, y)) in [(y 1), (y 2), (y 3), (y (+ (1, 2, (y 3))))]
+	expected result: 15
+	actual result: 15
+
+cost 15: PASS - [[1, 2], [3, 4], [5, 6], [7, 8], [9, 10]]
+	expected result: 15
+	actual result: 15
+
+cost 15: PASS - foldr (fun acc -> (fun y -> + (acc, y, 3))) 0 [1,2,3,4,5,6,7,8,9,10]
+	expected result: 15
+	actual result: 15
+
+##########       COST TESTS COMPLETE         ##########
+##########    RUNNING ENUMERATION TESTS      ##########
+enumerate programs of correct weight: PASS - weight: 0 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 1 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 2 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 3 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 4 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 5 -  type: Int_t
+
+enumerate programs of correct weight: PASS - weight: 0 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 1 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 2 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 3 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 4 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 5 -  type: Bool_t
+
+enumerate programs of correct weight: PASS - weight: 0 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 1 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 2 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 3 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 4 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 5 -  type: [Int_t]
+
+enumerate programs of correct weight: PASS - weight: 0 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 1 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 2 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 3 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 4 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 5 -  type: (Int_t)
+
+enumerate programs of correct weight: PASS - weight: 0 -  type: (Int_t, Int_t)
+
+enumerate programs of correct weight: PASS - weight: 1 -  type: (Int_t, Int_t)
+
+enumerate programs of correct weight: PASS - weight: 2 -  type: (Int_t, Int_t)
+
+enumerate programs of correct weight: PASS - weight: 3 -  type: (Int_t, Int_t)
+
+enumerate programs of correct weight: PASS - weight: 4 -  type: (Int_t, Int_t)
+
+enumerate programs of correct weight: PASS - weight: 5 -  type: (Int_t, Int_t)
+
+##########    ENUMERATION TESTS COMPLETE     ##########
+##########      RUNNING LEARNING TESTS       ##########
+list of list: PASS - [1, 2, 3, 4]
+	expected result: [1, 2, 3, 4, ]
+	actual result: [1, 2, 3, 4, ]
+
+list of list: PASS - [2]
+	expected result: [2, ]
+	actual result: [2, ]
+
+list of list: PASS - []
+	expected result: []
+	actual result: []
+
+list of tree: PASS - (2, (), ())
+	expected result: [2, ]
+	actual result: [2, ]
+
+list of tree: PASS - (5, (), (2, (), (1, (), ())))
+	expected result: [5, 2, 1, ]
+	actual result: [5, 2, 1, ]
+
+length preserving: PASS - [([1, 2, 3, 4, 5] -> [10, 2, 4, 5, 2])]
+	expected result: true
+	actual result: true
+
+length preserving: PASS - [([] -> [])]
+	expected result: true
+	actual result: true
+
+length preserving: PASS - [((1, (3, (), ()), (4, (), ())) -> (2, (2, (), (4, (), ())), ()))]
+	expected result: true
+	actual result: true
+
+length preserving: PASS - [((1, (), ()) -> (10, (), ()))]
+	expected result: true
+	actual result: true
+
+length preserving: PASS - [((1, (), (4, (), ())) -> (2, (2, (), (4, (), ())), ()))]
+	expected result: false
+	actual result: false
+
+length preserving: PASS - [((1, (), (1, (), ())) -> (10, (), ()))]
+	expected result: false
+	actual result: false
+
+length preserving: PASS - [([10, 12] -> [1, 2, 3])]
+	expected result: false
+	actual result: false
+
+length preserving: PASS - [([1, 2, 3] -> [])]
+	expected result: false
+	actual result: false
+
+output not larger: PASS - [([1, 2, 3] -> [1, 2, 3])]
+	expected result: true
+	actual result: true
+
+output not larger: PASS - [([1, 2, 3] -> [])]
+	expected result: true
+	actual result: true
+
+output not larger: PASS - [([1, 2, 3] -> [1, 2, 3, 4])]
+	expected result: false
+	actual result: false
+
+output not larger: PASS - [([] -> [1])]
+	expected result: false
+	actual result: false
+
+consistent mapping: PASS - [([2, 4, 2, 4, 2] -> [4, 8, 4, 8, 4])]
+	expected result: true
+	actual result: true
+
+consistent mapping: PASS - [([1] -> [3])]
+	expected result: true
+	actual result: true
+
+consistent mapping: PASS - [((1, (3, (), ()), (3, (), (4, (), ()))) -> (10, (30, (), ()), (30, (), (40, (), ()))))]
+	expected result: true
+	actual result: true
+
+consistent mapping: PASS - [((1, (3, (), ()), (3, (), (4, (), ()))) -> (10, (30, (), ()), (25, (), (40, (), ()))))]
+	expected result: false
+	actual result: false
+
+consistent mapping: PASS - [((4, (1, (), ()), (4, (), ())) -> (14, (1, (), ()), (10, (), ())))]
+	expected result: false
+	actual result: false
+
+consistent mapping: PASS - [([1, 2, 1, 3, 2] -> [3, 2, 5, 3, 5])]
+	expected result: false
+	actual result: false
+
+consistent mapping: PASS - [([4, 3, 4, 3] -> [1, 2, 1, 3])]
+	expected result: false
+	actual result: false
+
+order preserving: PASS - [([1, 2, 3, 4] -> [1, 2, 4])]
+	expected result: true
+	actual result: true
+
+order preserving: PASS - [([1, 2, 3, 4] -> [])]
+	expected result: true
+	actual result: true
+
+order preserving: PASS - [([1, 2, 3, 4] -> [1])]
+	expected result: true
+	actual result: true
+
+order preserving: PASS - [([1, 2, 3, 4] -> [4])]
+	expected result: true
+	actual result: true
+
+order preserving: PASS - [([1, 2, 3, 4] -> [1, 3, 2])]
+	expected result: false
+	actual result: false
+
+order preserving: PASS - [([1, 3, 2, 4, 5] -> [5, 4, 3, 2])]
+	expected result: false
+	actual result: false
+
+list map: PASS - ([2, 4, 6, 2, 4] -> [3, 5, 7, 3, 5])
+	expected result: 1
+	actual result: 1
+
+list map: PASS - ([1] -> [1])
+	expected result: 1
+	actual result: 1
+
+list map: PASS - ([1, 2, 3, 4] -> [1, 4, 9, 16])
+	expected result: 1
+	actual result: 1
+
+list filter: PASS - ([1, 2, 3, 2] -> [2, 2])
+	expected result: 2
+	actual result: 2
+
+list filter: PASS - ([3, 5, 4] -> [5, 4])
+	expected result: 2
+	actual result: 2
+
+list fold: PASS - ([1, 2, 3, 2] -> [1, 2, 3, 5])
+	expected result: 3
+	actual result: 3
+
+list fold: PASS - ([1, 1, 1] -> 3)
+	expected result: 3
+	actual result: 3
+
+list fold: PASS - ([1, 1, 2] -> [4])
+	expected result: 3
+	actual result: 3
+
+list fold: PASS - ([0,0] -> 0)
+	expected result: 3
+	actual result: 3
+
+list fold: PASS - ([1, 5, 2] -> [2, 5])
+	expected result: 3
+	actual result: 3
+
+tree map: PASS - ((1, (2, (), ()), (3, (), (2, (), ()))) -> (10, (20, (), ()), (30, (), (20, (), ()))))
+	expected result: 1
+	actual result: 1
+
+tree map: PASS - ((2, (4, (), ()), (4, (), (2, (), ()))) -> (0, (2, (), ()), (2, (), (0, (), ()))))
+	expected result: 1
+	actual result: 1
+
+tree map: PASS - ((1, (), ()) -> (10, (), ()))
+	expected result: 1
+	actual result: 1
+
+tree map: PASS - ((1, (), (2, (), (2, (), ()))) -> (1, (), (3, (), (3, (), ()))))
+	expected result: 1
+	actual result: 1
+
+tree fold: PASS - ((1, (), (2, (3, (), ()), ())) -> 1)
+	expected result: 3
+	actual result: 3
+
+tree fold: PASS - ((10, (), (20, (), (13, (), ()))) -> [10, 20, 13])
+	expected result: 3
+	actual result: 3
+
+tree fold: PASS - ((3, (), ()) -> [])
+	expected result: 3
+	actual result: 3
+
+tree fold: PASS - ((14, (), (1, (2, (), ()), ())) -> 1001)
+	expected result: 3
+	actual result: 3
+
+none: PASS - (1 -> [])
+	expected result: 0
+	actual result: 0
+
+none: PASS - (42 -> 42)
+	expected result: 0
+	actual result: 0
+
+none: PASS - ((1, 2) -> (2, 1))
+	expected result: 0
+	actual result: 0
+
+none: PASS - (([1, 2, 3], [3, 2, 1]) -> ([3, 2, 1], [1, 2, 3]))
+	expected result: 0
+	actual result: 0
+
+none: PASS - (1 -> [1, 1, 1, 1])
+	expected result: 0
+	actual result: 0
+
+##########      LEARNING TESTS COMPLETE      ##########
+##########         TESTING COMPLETE!         ##########
+INFER TEST: 35/35 TESTS PASSED
+EVAL TEST:  54/54 TESTS PASSED
+COST TEST:  40/40 TESTS PASSED
+ENUM TEST:  30/30 TESTS PASSED
+LEARN TEST: 53/53 TESTS PASSED

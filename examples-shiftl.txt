@@ -1,0 +1,6 @@
+
+(* Examples go here (default: examples for the function "shift left"): *)
+
+[	([43, 32, 21, 6, 2, -64] -> [32, 21, 6, 2, -64, 43]),
+	([1, 2, 3, 4, 5]	 -> 	    [2, 3, 4, 5, 1]),
+	([2, 4]			 -> 		     [4, 2])	]

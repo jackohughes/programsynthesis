@@ -1,0 +1,8 @@
+assoc=true
+commutativity=true
+cache=true
+learning=true
+libraries=false
+laziness=false
+limit=600
+exclude=Tree
