@@ -372,7 +372,7 @@ let check env examples expr = let open Eval in let open Tuple.T2 in
 
 
 let rec inf l e f = match l with
-	| [] -> failwith "Error: examples required"
+	| [] -> failwith "Error: examples required "
 	| x :: [] -> Infer.infer e (f x)
 	| x :: xs  -> 
 		let typ_of_current = Infer.infer e (f x) in
